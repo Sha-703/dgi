@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cmd /c \"taskkill /PID 7016 /F\")",
+      "Bash(netstat -ano)",
+      "Bash(findstr :3000)",
+      "Bash(cmd /c \"taskkill /IM node.exe /F\")",
+      "Bash(powershell -Command \"Get-Process -Id \\(Get-NetTCPConnection -LocalPort 3000\\).OwningProcess | Stop-Process -Force\")",
+      "Bash(curl -H \"Authorization: Token 00dd551eebe4ccf50b5bb5324bef6d82a1acb1a9\" http://127.0.0.1:8000/api/statistiques/)"
+    ]
+  }
+}
