@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+*.sqlite3
+db_iper_dgi.sqlite3
+staticfiles/
+.env
