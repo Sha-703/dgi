@@ -6,7 +6,7 @@ Ou : python seed_data.py (depuis le dossier dgi_project)
 import os
 import django
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'dgi_project.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings')
 django.setup()
 
 from iper_app.models import Utilisateur, Contribuable, AgentDGI, Declaration, Paiement

@@ -4,7 +4,7 @@ services:
     name: dgi-platform-backend
     env: python
     buildCommand: pip install -r backend/requirements.txt
-    startCommand: cd backend && gunicorn wsgi:application --bind 0.0.0.0:$PORT --workers 3
+    startCommand: cd backend && python manage.py migrate && python seed_data.py && gunicorn wsgi:application --bind 0.0.0.0:$PORT --workers 3
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: settings
@@ -15,6 +15,6 @@ services:
       - key: SECRET_KEY
         fromSecret: dgi-secret-key
       - key: ALLOWED_HOSTS
-        value: dgi-lesv.onrender.com,localhost
+        value: dgi-lesv.onrender.com,localhost,127.0.0.1
       - key: CORS_ALLOWED_ORIGINS
         value: https://dgi-onje4bdhy-charias-projects.vercel.app

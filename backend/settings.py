@@ -11,9 +11,17 @@ SECRET_KEY = os.environ.get(
 
 DEBUG = os.environ.get("DEBUG", "True").lower() == "true"
 
+# Render injecte RENDER=true sur tous ses services. On s'en sert pour rendre la
+# config robuste MEME si ALLOWED_HOSTS / CORS_ALLOWED_ORIGINS ne sont pas definis
+# dans le dashboard Render (cas d'un service cree manuellement sans blueprint).
+ON_RENDER = os.environ.get("RENDER", "").lower() in ("1", "true", "yes")
+
+_default_hosts = "localhost,127.0.0.1"
+if ON_RENDER:
+    _default_hosts += ",.onrender.com"  # autorise *.onrender.com (sous-domaines)
 ALLOWED_HOSTS = [
     h.strip()
-    for h in os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+    for h in os.environ.get("ALLOWED_HOSTS", _default_hosts).split(",")
     if h
 ]
 
@@ -94,10 +102,16 @@ CORS_ALLOWED_ORIGINS = [
     ).split(",")
     if o
 ]
+# En prod sur Vercel, on accepte aussi les aperçus (*.vercel.app) pour ne pas
+# avoir a lister chaque URL dans le dashboard Render.
+CORS_ALLOWED_ORIGIN_REGEXES = [r"^https://.*\.vercel\.app$"] if ON_RENDER else []
 CORS_ALLOW_CREDENTIALS = True
 
 # Security settings
 if not DEBUG:
+    # Derriere le proxy Render : indispensable pour que SECURE_SSL_REDIRECT ne
+    # provoque pas de boucle de redirection (Render expose le service en HTTP a Gunicorn).
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True

@@ -1,6 +1,8 @@
 import { useState, useEffect, createContext, useContext, useCallback } from "react";
 
-const BASE_URL = '/api';
+const BASE_URL =
+  import.meta.env.VITE_API_URL ||
+  (import.meta.env.DEV ? 'http://localhost:8000/api' : '/api');
 const getToken = () => localStorage.getItem('dgi_token');
 const setToken = (t) => localStorage.setItem('dgi_token', t);
 const removeToken = () => localStorage.removeItem('dgi_token');
@@ -13,8 +15,14 @@ async function apiRequest(method, path, body = null) {
   if (body) options.body = JSON.stringify(body);
   let res;
   try { res = await fetch(`${BASE_URL}${path}`, options); }
-  catch { throw new Error("Impossible de joindre le serveur. Vérifiez que Django est lancé sur le port 8000."); }
+  catch { throw new Error("Impossible de joindre le serveur. Vérifiez l'URL de l'API et votre connexion."); }
   if (res.status === 204) return null;
+  // Si le serveur renvoie du HTML (ex: page index React / page d'erreur), res.json()
+  // lèverait "JSON.parse: unexpected character". On détecte ça tôt avec un message clair.
+  const contentType = res.headers.get('content-type') || '';
+  if (!contentType.includes('application/json')) {
+    throw new Error(`Réponse inattendue du serveur (HTML au lieu de JSON). Vérifiez VITE_API_URL — actuel : ${BASE_URL}`);
+  }
   const data = await res.json();
   if (!res.ok) {
     const msg = data?.detail || data?.error || data?.non_field_errors?.[0]

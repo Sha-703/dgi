@@ -4,9 +4,7 @@ __pycache__/
 *$py.class
 
 # Personal env
-.env
 .venv
-env/
 venv/
 ENV/
 env.bak/
@@ -34,3 +32,10 @@ local_settings.py
 # Vercel
 .vercel/
 output/
+
+# Vite env — on ne commite pas les .env locaux (secrets eventuels),
+# mais on commite .env.production (URL d'API publique, non secrete).
+frontend/.env
+frontend/.env.local
+frontend/.env.*.local
+!frontend/.env.production
