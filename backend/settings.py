@@ -25,6 +25,13 @@ ALLOWED_HOSTS = [
     if h
 ]
 
+# Time zone — OBLIGATOIRE en prod : Declaration.save() construit des dates
+# "aware" (tzinfo=utc). Si USE_TZ=False, timezone.now() renvoie du naive et la
+# comparaison naive/aware leve "TypeError: can't compare offset-naive and
+# offset-aware datetimes".
+USE_TZ = True
+TIME_ZONE = "Africa/Kinshasa"
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
